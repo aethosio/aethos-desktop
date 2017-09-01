@@ -26,4 +26,4 @@ au help
 
 If you're not familiar with Aurelia, check out [Aurelia Docs](http://aurelia.io/hub.html#/doc/persona/developer).
 
-If you're not familiar with AethOS, there aren't really any docs yet, but you can check out our (gitter chat channel)[https://gitter.im/aethosio/Discuss].
+If you're not familiar with AethOS, there aren't really any docs yet, but you can check out our [gitter chat channel](https://gitter.im/aethosio/Discuss).
