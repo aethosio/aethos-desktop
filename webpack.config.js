@@ -18,6 +18,16 @@ const srcDir = path.resolve(__dirname, 'src');
 const nodeModulesDir = path.resolve(__dirname, 'node_modules');
 const baseUrl = '/';
 
+const vendorManifest = require('./node_modules/aethos-client-core/dist/vendor-manifest.json');
+
+console.log(`Vendor manifest name: ${vendorManifest.name}`);
+
+const vendorBundleName = `/${vendorManifest.name.replace('_', '.')}.bundle.js`;
+
+const dllReference = new DllReferencePlugin({
+  manifest: vendorManifest
+});
+
 const cssRules = [
   { loader: 'css-loader' },
 ];
@@ -34,9 +44,9 @@ module.exports = ({production, server, extractCss, coverage} = {}) => ({
   output: {
     path: outDir,
     publicPath: baseUrl,
-    filename: production ? '[name].[chunkhash].bundle.js' : '[name].[hash].bundle.js',
-    sourceMapFilename: production ? '[name].[chunkhash].bundle.map' : '[name].[hash].bundle.map',
-    chunkFilename: production ? '[name].[chunkhash].chunk.js' : '[name].[hash].chunk.js'
+    filename: '[name].bundle.js',
+    sourceMapFilename: '[name].bundle.map',
+    chunkFilename: '[name].chunk.js'
   },
   devServer: {
     contentBase: outDir,
@@ -89,10 +99,7 @@ module.exports = ({production, server, extractCss, coverage} = {}) => ({
     ]
   },
   plugins: [
-    new DllReferencePlugin({
-        context: '.',
-        manifest: require('./node_modules/aethos-client-core/dist/vendor-manifest.json')
-    }),
+    dllReference,
     new AureliaPlugin(),
     new ProvidePlugin({
       'Promise': 'bluebird'
@@ -116,7 +123,7 @@ module.exports = ({production, server, extractCss, coverage} = {}) => ({
       } : undefined,
       metadata: {
         // available in index.ejs //
-        title, server, baseUrl
+        title, server, baseUrl, vendorBundleName
       }
     }),
     ...when(extractCss, new ExtractTextPlugin({
@@ -128,9 +135,6 @@ module.exports = ({production, server, extractCss, coverage} = {}) => ({
     })),
     ...when(production, new CopyWebpackPlugin([
       { from: 'static/favicon.ico', to: 'favicon.ico' }
-    ])),
-    new CopyWebpackPlugin([
-      { from: 'node_modules/vendor.*.bundle.js' }
-    ])
+    ]))
   ]
 });
