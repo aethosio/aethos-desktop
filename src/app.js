@@ -3,3 +3,4 @@ export class App {
     this.message = 'Hello World!';
   }
 }
+
